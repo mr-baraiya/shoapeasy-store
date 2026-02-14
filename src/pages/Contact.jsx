@@ -118,7 +118,7 @@ const Contact = () => {
                                             value={formData.name}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900 bg-white"
                                             placeholder="John Doe"
                                         />
                                     </div>
@@ -133,7 +133,7 @@ const Contact = () => {
                                             value={formData.email}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900 bg-white"
                                             placeholder="john@example.com"
                                         />
                                     </div>
@@ -148,7 +148,7 @@ const Contact = () => {
                                         name="phone"
                                         value={formData.phone}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900 bg-white"
                                         placeholder="+1 234 567 8900"
                                     />
                                 </div>
@@ -158,7 +158,7 @@ const Contact = () => {
                                     <h3 className="text-xl font-semibold text-gray-800 mb-4">Clothing Details</h3>
                                     
                                     <div className="grid md:grid-cols-2 gap-6">
-                                        <div>
+                                        <div className="relative">
                                             <label className="block text-gray-700 font-medium mb-2">
                                                 Clothing Type *
                                             </label>
@@ -167,7 +167,8 @@ const Contact = () => {
                                                 value={formData.clothingType}
                                                 onChange={handleChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white appearance-none cursor-pointer text-gray-900"
+                                                style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: "right 0.5rem center", backgroundRepeat: "no-repeat", backgroundSize: "1.5em 1.5em", paddingRight: "2.5rem" }}
                                             >
                                                 <option value="">Select Type</option>
                                                 <option value="T-Shirt">T-Shirt</option>
@@ -183,7 +184,7 @@ const Contact = () => {
                                             </select>
                                         </div>
 
-                                        <div>
+                                        <div className="relative">
                                             <label className="block text-gray-700 font-medium mb-2">
                                                 Size *
                                             </label>
@@ -192,7 +193,8 @@ const Contact = () => {
                                                 value={formData.size}
                                                 onChange={handleChange}
                                                 required
-                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition bg-white appearance-none cursor-pointer text-gray-900"
+                                                style={{ backgroundImage: "url(\"data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e\")", backgroundPosition: "right 0.5rem center", backgroundRepeat: "no-repeat", backgroundSize: "1.5em 1.5em", paddingRight: "2.5rem" }}
                                             >
                                                 <option value="">Select Size</option>
                                                 <option value="XS">XS</option>
@@ -217,7 +219,7 @@ const Contact = () => {
                                             value={formData.color}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900 bg-white"
                                             placeholder="e.g., Navy Blue, Black, Custom Pattern"
                                         />
                                     </div>
@@ -232,7 +234,7 @@ const Contact = () => {
                                             value={formData.design}
                                             onChange={handleChange}
                                             required
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition text-gray-900 bg-white"
                                             placeholder="e.g., Logo placement, graphics, embroidery"
                                         />
                                     </div>
@@ -246,7 +248,7 @@ const Contact = () => {
                                             value={formData.message}
                                             onChange={handleChange}
                                             rows="4"
-                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none"
+                                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-none text-gray-900 bg-white"
                                             placeholder="Tell us more about your custom design requirements, budget, timeline, or any other specifications..."
                                         ></textarea>
                                     </div>

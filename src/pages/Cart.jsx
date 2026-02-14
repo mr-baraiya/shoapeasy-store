@@ -3,11 +3,14 @@ import { useCart } from '../context/CartContext';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
+import { initiatePayment, formatOrderDetails, convertToINR } from '../utils/razorpay';
+import { useState } from 'react';
 
 const Cart = () => {
     const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+    const [isProcessing, setIsProcessing] = useState(false);
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         if (cartItems.length === 0) {
             Swal.fire({
                 icon: 'warning',
@@ -17,14 +20,70 @@ const Cart = () => {
             return;
         }
 
-        Swal.fire({
-            icon: 'success',
-            title: 'Order Placed!',
-            text: `Your order of $${getCartTotal().toFixed(2)} has been placed successfully!`,
+        // Get customer details
+        const { value: formValues } = await Swal.fire({
+            title: 'Enter Your Details',
+            html: `
+                <input id="swal-input1" class="swal2-input" placeholder="Full Name" required>
+                <input id="swal-input2" class="swal2-input" type="email" placeholder="Email" required>
+                <input id="swal-input3" class="swal2-input" type="tel" placeholder="Phone Number" required>
+            `,
+            focusConfirm: false,
+            showCancelButton: true,
             confirmButtonColor: '#2563eb',
-        }).then(() => {
-            clearCart();
+            confirmButtonText: 'Proceed to Payment',
+            preConfirm: () => {
+                const name = document.getElementById('swal-input1').value;
+                const email = document.getElementById('swal-input2').value;
+                const phone = document.getElementById('swal-input3').value;
+                
+                if (!name || !email || !phone) {
+                    Swal.showValidationMessage('Please fill all fields');
+                    return false;
+                }
+                return { name, email, phone };
+            }
         });
+
+        if (!formValues) return;
+
+        setIsProcessing(true);
+
+        const orderData = {
+            amount: getCartTotal(),
+            customerName: formValues.name,
+            customerEmail: formValues.email,
+            customerPhone: formValues.phone,
+            items: formatOrderDetails(cartItems)
+        };
+
+        const onSuccess = (response) => {
+            setIsProcessing(false);
+            Swal.fire({
+                icon: 'success',
+                title: 'Payment Successful!',
+                html: `
+                    <p class="mb-2"><strong>Payment ID:</strong> ${response.razorpay_payment_id}</p>
+                    <p class="mb-2"><strong>Amount Paid:</strong> ₹${convertToINR(getCartTotal())} (USD $${getCartTotal().toFixed(2)})</p>
+                    <p class="mt-4 text-green-600 font-semibold">Thank you for your purchase!</p>
+                `,
+                confirmButtonColor: '#2563eb',
+            }).then(() => {
+                clearCart();
+            });
+        };
+
+        const onFailure = (error) => {
+            setIsProcessing(false);
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment Failed',
+                text: error || 'Something went wrong. Please try again.',
+                confirmButtonColor: '#2563eb',
+            });
+        };
+
+        initiatePayment(orderData, onSuccess, onFailure);
     };
 
     if (cartItems.length === 0) {
@@ -119,24 +178,35 @@ const Cart = () => {
 
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between text-gray-600">
-                                    <span>Subtotal</span>
+                                    <span>Subtotal (USD)</span>
                                     <span>${getCartTotal().toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-gray-600">
+                                    <span>Subtotal (INR)</span>
+                                    <span>₹{convertToINR(getCartTotal())}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Shipping</span>
                                     <span className="text-green-600 font-semibold">FREE</span>
                                 </div>
-                                <div className="border-t pt-4 flex justify-between text-xl font-bold text-gray-800">
-                                    <span>Total</span>
-                                    <span>${getCartTotal().toFixed(2)}</span>
+                                <div className="border-t pt-4">
+                                    <div className="flex justify-between text-xl font-bold text-gray-800 mb-1">
+                                        <span>Total (USD)</span>
+                                        <span>${getCartTotal().toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between text-lg font-semibold text-blue-600">
+                                        <span>Payment Amount (INR)</span>
+                                        <span>₹{convertToINR(getCartTotal())}</span>
+                                    </div>
                                 </div>
                             </div>
 
                             <button
                                 onClick={handleCheckout}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg mb-3"
+                                disabled={isProcessing}
+                                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg mb-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
                             >
-                                Proceed to Checkout
+                                {isProcessing ? 'Processing...' : 'Proceed to Payment'}
                             </button>
 
                             <Link

@@ -19,6 +19,10 @@ const Navbar = () => {
                             Shop
                         </Link>
                         
+                        <Link to="/contact" className="text-gray-700 hover:text-blue-600 transition-colors font-medium">
+                            Custom Design
+                        </Link>
+                        
                         <Link to="/cart" className="relative flex items-center text-gray-700 hover:text-blue-600 transition-colors">
                             <ShoppingCart size={24} />
                             {cartCount > 0 && (
