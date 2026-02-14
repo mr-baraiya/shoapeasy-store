@@ -1,8 +1,9 @@
 // Razorpay Configuration
-export const RAZORPAY_KEY_ID = 'rzp_test_ZFxDYdxbnGTEtC';
+export const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
+export const IS_TEST_MODE = import.meta.env.VITE_RAZORPAY_TEST_MODE === 'true';
 
-// Convert USD to INR (approximate rate - you can update this)
-const USD_TO_INR_RATE = 83;
+// Convert USD to INR (approximate rate - you can update this in .env file)
+const USD_TO_INR_RATE = Number(import.meta.env.VITE_USD_TO_INR_RATE) || 83;
 
 export const initiatePayment = async (orderData, onSuccess, onFailure) => {
     // Convert USD to INR
@@ -14,7 +15,7 @@ export const initiatePayment = async (orderData, onSuccess, onFailure) => {
         currency: 'INR',
         name: 'ShopEasy',
         description: 'Purchase from ShopEasy Store',
-        image: '/vite.svg', // Your logo
+        image: '/logo.png', // Your logo
         order_id: orderData.orderId || '', // Optional: if you have backend order creation
         handler: function (response) {
             // Payment successful

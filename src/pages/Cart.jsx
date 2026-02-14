@@ -1,14 +1,17 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Swal from 'sweetalert2';
-import { initiatePayment, formatOrderDetails, convertToINR } from '../utils/razorpay';
+import { initiatePayment, formatOrderDetails, convertToINR, IS_TEST_MODE } from '../utils/razorpay';
 import { useState } from 'react';
 
 const Cart = () => {
     const { cartItems, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+    const { user, isAuthenticated } = useAuth();
     const [isProcessing, setIsProcessing] = useState(false);
+    const navigate = useNavigate();
 
     const handleCheckout = async () => {
         if (cartItems.length === 0) {
@@ -20,12 +23,30 @@ const Cart = () => {
             return;
         }
 
-        // Get customer details
+        // Check if user is authenticated
+        if (!isAuthenticated()) {
+            const result = await Swal.fire({
+                icon: 'info',
+                title: 'Sign In Required',
+                text: 'Please sign in to proceed with checkout',
+                showCancelButton: true,
+                confirmButtonText: 'Sign In',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#2563eb',
+            });
+            
+            if (result.isConfirmed) {
+                navigate('/signin', { state: { from: { pathname: '/cart' } } });
+            }
+            return;
+        }
+
+        // Get customer details - prefill with user data
         const { value: formValues } = await Swal.fire({
-            title: 'Enter Your Details',
+            title: 'Confirm Your Details',
             html: `
-                <input id="swal-input1" class="swal2-input" placeholder="Full Name" required>
-                <input id="swal-input2" class="swal2-input" type="email" placeholder="Email" required>
+                <input id="swal-input1" class="swal2-input" placeholder="Full Name" value="${user.name}" required>
+                <input id="swal-input2" class="swal2-input" type="email" placeholder="Email" value="${user.email}" required>
                 <input id="swal-input3" class="swal2-input" type="tel" placeholder="Phone Number" required>
             `,
             focusConfirm: false,
@@ -61,11 +82,12 @@ const Cart = () => {
             setIsProcessing(false);
             Swal.fire({
                 icon: 'success',
-                title: 'Payment Successful!',
+                title: IS_TEST_MODE ? '🧪 Test Payment Successful!' : 'Payment Successful!',
                 html: `
+                    ${IS_TEST_MODE ? '<div class="bg-yellow-100 border border-yellow-300 rounded p-2 mb-3"><p class="text-sm font-semibold text-yellow-800">⚠️ This was a TEST transaction. No real money was charged.</p></div>' : ''}
                     <p class="mb-2"><strong>Payment ID:</strong> ${response.razorpay_payment_id}</p>
                     <p class="mb-2"><strong>Amount Paid:</strong> ₹${convertToINR(getCartTotal())} (USD $${getCartTotal().toFixed(2)})</p>
-                    <p class="mt-4 text-green-600 font-semibold">Thank you for your purchase!</p>
+                    <p class="mt-4 text-green-600 font-semibold">Thank you for your ${IS_TEST_MODE ? 'test ' : ''}purchase!</p>
                 `,
                 confirmButtonColor: '#2563eb',
             }).then(() => {
@@ -204,7 +226,7 @@ const Cart = () => {
                             <button
                                 onClick={handleCheckout}
                                 disabled={isProcessing}
-                                className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg mb-3 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-all font-semibold text-lg mb-3 disabled:bg-gray-400 disabled:cursor-not-allowed shadow-lg"
                             >
                                 {isProcessing ? 'Processing...' : 'Proceed to Payment'}
                             </button>

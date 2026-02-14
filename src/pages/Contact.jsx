@@ -30,24 +30,23 @@ const Contact = () => {
         setIsSubmitting(true);
 
         try {
-            // EmailJS configuration
+            // EmailJS configuration - matching template parameters
             const templateParams = {
-                from_name: formData.name,
-                from_email: formData.email,
+                full_name: formData.name,
+                email: formData.email,
                 phone: formData.phone,
                 clothing_type: formData.clothingType,
                 size: formData.size,
-                color: formData.color,
-                design: formData.design,
-                message: formData.message,
-                to_name: 'ShopEasy Team',
+                preferred_color: formData.color,
+                design_preferences: formData.design,
+                additional_details: formData.message,
             };
 
             await emailjs.send(
-                'service_ef4l8lb',           // Service ID
-                'template_0evqhzo',          // Template ID
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,      // Service ID from .env
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,     // Template ID from .env
                 templateParams,
-                'vcfvtcxuQfUbBL4ze'          // User ID
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY       // Public Key from .env
             );
 
             toast.success('Your custom clothing request has been sent successfully! We\'ll contact you soon.');
