@@ -170,7 +170,7 @@ const Cart = () => {
                                     >
                                         <Minus size={16} />
                                     </button>
-                                    <span className="w-12 text-center font-semibold">{item.quantity}</span>
+                                    <span className="w-12 text-center font-semibold text-gray-900">{item.quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                         className="bg-gray-200 hover:bg-gray-300 rounded-full p-1 transition-colors"
